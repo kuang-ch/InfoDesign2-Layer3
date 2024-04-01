@@ -1,0 +1,56 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+#mySlider {
+  z-index: 1;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-color: #ebebeb !important;
+
+  cursor: none;
+  border-radius: 5px;
+  width: 10px;
+  height: 10px;
+}
+
+#mySlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  /* Set thumb color */
+  background-color: #333333;
+
+  /* Set thumb dimensions */
+  width: 15px;
+  height: 15px;
+
+  border-radius: 50%;
+}
+
+#mbtaMap {
+  height: 800px; /* Set a specific height */
+}
+
+#mbtaMap {
+  position: relative;
+  z-index: 1;
+  background-color: lightblue;
+  width: 100vW;
+  height: 100vH;
+  display: block;
+}
+
+#intro {
+  position: relative;
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.7); /* Transparent white background */
+  width: 100vW;
+  height: 100vH;
+  display: none; /* Initially hidden */
+}

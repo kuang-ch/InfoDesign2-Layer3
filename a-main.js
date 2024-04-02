@@ -6,8 +6,19 @@ let PPMono;
 //Grid Setup
 let scaleFactor = 10;
 let moveFactorX = 125;
-let moveFactorY = 150;
-let pieRadius = 1500;
+let moveFactorY = 125;
+let pieRadius = 2400;
+
+// Variables for tooltip
+let lineWeight;
+let tooltipVisible = false;
+let tooltipText = "";
+let tooltipX, tooltipY;
+let buffer = 1;
+
+//Testing
+let testLineStartX, testLineStartY;
+let testLineEndX, testLineEndY;
 
 // Arrays to hold data
 let countyList = [];
@@ -15,51 +26,52 @@ let processedStates = {};
 
 // Preload function to load external data
 function preload() {
-    table = loadTable('assets/masterDF.csv'
+  table = loadTable('assets/masterDF.csv'
     , 'csv', 'header', () => {
-        for (let row of table.rows) {
-            let rowData = {
-                state: String(row.get("State")),
-                county: String(row.get("County")),
-                peopleTotal: int(row.get("Total")),
-                perPerson: float(row.get("perPerson")),
-                percentUnder18: float(row.get("percentageUnder18")),
-                percentElderly: float(row.get("percentageElderly")),
-                awards: int(row.get("Awards")),
-                apps: int(row.get("Applications"))
-            }
-            masterCountyData.push(rowData);
+      for (let row of table.rows) {
+        let rowData = {
+          state: String(row.get("State")),
+          county: String(row.get("County")),
+          peopleTotal: int(row.get("Total")),
+          perPerson: float(row.get("perPerson")),
+          percentUnder18: float(row.get("percentageUnder18")),
+          percentElderly: float(row.get("percentageElderly")),
+          awards: int(row.get("Awards")),
+          apps: int(row.get("Applications"))
         }
+        masterCountyData.push(rowData);
+      }
     })
-    PPMono = loadFont('assets/PPSupplyMono-Regular.otf');
+  PPMono = loadFont('assets/PPSupplyMono-Regular.otf');
 };
 
 // Setup function
 function setup() {
-    createCanvas(2000, 1000);
+  createCanvas(2000, 1000);
 
-    if (PPMono === null) {
-        console.error("Error loading the table. Make sure the file is in the correct location.");
-        return;
-    } else {
-    }
+  if (PPMono === null) {
+    console.error("Error loading the table. Make sure the file is in the correct location.");
+    return;
+  } else {
+  }
+
 }
-
 // Draw function
 function draw() {
   eyeViz();
+  // console.log(mouseX, mouseY);
 }
 
 // eyeViz function
 function eyeViz() {
   let startX = 100;
-  let startY = 110;
+  let startY = 100;
   let countyCounter = 0;
   let circlesDrawn = 0;
   let stateCounter = 0;
 
   background(255);
-  for (let i = 0; i < masterCountyData.length - 1; i++) {
+  for (let i = 0; i < 50; i++) {
     // Get Initial County
     let data = masterCountyData[i];
     let dataCompare = masterCountyData[i + 1];
@@ -116,14 +128,39 @@ function eyeViz() {
     let angleIncrement = radians(360.0 / 202);
     let lineRotation = HALF_PI + (angleIncrement * countyCounter);
     let lineOffset = appsPlotted / 2 + 0.5;
-    let lineWeight = 0.5;
+    lineWeight = 0.5;
 
     push();
     translate(startX, startY);
     rotate(lineRotation);
+
+    // Calculate translated start and end points
+    let rotatedLineStartX = 0;
+    let rotatedLineStartY = lineOffset;
+    let rotatedLineEndX = 0;
+    let rotatedLineEndY = plottedPerPerson + lineOffset;
+
+    // Perform reverse transformations
+    let invRotation = -lineRotation;
+    let invTranslationX = -startX;
+    let invTranslationY = -startY;
+
+    lineStartX = (rotatedLineStartX * cos(invRotation) - rotatedLineStartY * sin(invRotation) + invTranslationX) * -1;
+    lineStartY = (rotatedLineStartX * sin(invRotation) + rotatedLineStartY * cos(invRotation) + invTranslationY) * -1;
+    lineEndX = (rotatedLineEndX * cos(invRotation) - rotatedLineEndY * sin(invRotation) + invTranslationX) * -1;
+    lineEndY = (rotatedLineEndX * sin(invRotation) + rotatedLineEndY * cos(invRotation) + invTranslationY) * -1;
+
+    //Check for Tooltip
+    checkTooltip(lineStartX, lineEndX, lineStartY, lineEndY, mouseX, mouseY, data);
+    console.log(tooltipVisible);
+
+    // console.log("Start point coordinates: (" + lineStartX + ", " + lineStartY + ")");
+    // console.log("End point coordinates: (" + testLineEndX + ", " + testLineEndY + ")");
+
     stroke(red, green, blue);
     strokeWeight(lineWeight);
     line(0, lineOffset, 0, plottedPerPerson + lineOffset);
+
     pop();
 
     if (circlesDrawn == 0) {
@@ -169,5 +206,43 @@ function eyeViz() {
         stateCounter = 0;
       }
     }
+  }
+  drawTooltip();
+}
+
+function checkTooltip(lineStartX, lineEndX, lineStartY, lineEndY, mouseX, mouseY, data) {
+  // Check if mouse is hovering over the line
+  let county = data.county;
+  let perPerson = data.perPerson;
+  let lineX1 = lineStartX;
+  let lineX2 = lineEndX;
+  let lineY1 = lineStartY;
+  let lineY2 = lineEndY;
+
+  if (
+    mouseX >= min(lineX1, lineX2) - buffer &&
+    mouseX <= max(lineX1, lineX2) + buffer &&
+    mouseY >= min(lineY1, lineY2) - buffer &&
+    mouseY <= max(lineY1, lineY2) + buffer
+  ) {
+    // Set tooltip info
+    tooltipVisible = true;
+    tooltipText = `County: ${county}, Per Person: ${perPerson}`; // Customize tooltip text as needed
+    tooltipX = mouseX + 10; // Adjust tooltip position
+    tooltipY = mouseY - 20; // Adjust tooltip position
+  } else {
+    // Hide tooltip
+    tooltipVisible = false;
+  }
+}
+
+// Function to draw tooltip
+function drawTooltip() {
+  if (tooltipVisible) {
+    fill(255); // Tooltip background color
+    stroke(0); // Tooltip border color
+    rect(tooltipX, tooltipY, textWidth(tooltipText) + 10, 20); // Draw tooltip rectangle
+    fill(0); // Tooltip text color
+    text(tooltipText, tooltipX + 5, tooltipY + 15); // Draw tooltip text
   }
 }

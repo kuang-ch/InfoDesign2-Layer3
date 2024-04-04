@@ -4,10 +4,17 @@ let textSizeValue = 6;
 let PPMono;
 
 //Grid Setup
-let scaleFactor = 4;
+let scaleFactor = 5;
 let moveFactorX = 200;
 let moveFactorY = 200;
 let pieRadius = 4000;
+
+//StateCounterSetup
+let firstPointX = 100;
+let firstPointY = 150;
+// let countyCounter = 0;
+// let circlesDrawn = 0;
+// let stateCounter = 0;
 
 // Variables for tooltip
 let lineWeight;
@@ -74,7 +81,7 @@ function setup() {
 // Draw function
 function draw() {
   locate();
-  // console.log(masterCountyData);
+  drawCircles();
   eyeViz2();
   mouseMoved();
   // console.log(masterCountyData);
@@ -84,12 +91,11 @@ function draw() {
 
 //locateLineValues
 function locate() {
-  let startX = 150;
-  let startY = 150;
+  let startX = firstPointX;
+  let startY = firstPointY;
   let countyCounter = 0;
   let circlesDrawn = 0;
   let stateCounter = 0;
-
   background(255);
 
   for (let i = 0; i < masterCountyData.length - 1; i++) {
@@ -215,28 +221,76 @@ function eyeViz2() {
     strokeWeight(lineWeight);
     line(X1, Y1, X2, Y2);
     pop();
+  }
+}
 
-    //Broken Circle Functionality
-    // if (stateA === stateB){
-    //   countyCounter++;
-    //   circlesDrawn = 1;
-    // } else {
-    //   countyCounter = 0;
-    //   circlesDrawn = 0;
-    // }
-    // if (circlesDrawn == 0){
-    //   push();
-    //   noStroke();
-    //   fill(204);
-    //   ellipse(circleX1, circleY1, appsPlotted * 2, appsPlotted * 2);
-    //   strokeWeight(lineWeight);
-    //   stroke(0);
-    //   fill(50);
-    //   ellipse(circleX1, circleY2, awardsPlotted * 2, awardsPlotted * 2)
-    //   pop();
-    // }
+// drawCircles
+function drawCircles() {
+  let startX = firstPointX;
+  let startY = firstPointY;
+  let circlesDrawn = 0;
+  let countyCounter = 0;
+  let stateCounter = 0;
+  for (let i = 0; i < masterCountyData.length - 1; i++) {
+    let data = masterCountyData[i];
+    let dataCompare = masterCountyData[i + 1];
 
-    //Drawing Pie Charts
+    let stateA = data.state;
+    let stateB = dataCompare.state;
+
+    // Awards and Apps Stuff
+    let awards = data.awards;
+    let apps = data.apps;
+    let appsPlotted = Math.sqrt(map(apps, 0, 150000, 0, pieRadius));
+    let awardsPlotted = Math.sqrt(map(awards, 0, 150000, 0, pieRadius));
+
+    // Rings
+    let ring1 = ((400 - 371.79) / scaleFactor) * 2;
+    let ring2 = ((500 - 371.79) / scaleFactor) * 2;
+    let ring3 = ((600 - 371.79) / scaleFactor) * 2;
+    let ring4 = ((700 - 371.79) / scaleFactor) * 2;
+
+    if (circlesDrawn == 0) {
+      push();
+      translate(startX, startY);
+      noStroke();
+      fill(204);
+      ellipse(0, 0, appsPlotted, appsPlotted);
+      strokeWeight(0.5);
+      stroke(0);
+      fill(50);
+      ellipse(0, appsPlotted / 2 - awardsPlotted - 2, awardsPlotted, awardsPlotted);
+
+      noFill();
+      stroke(75, 75, 75, 100);
+      ellipse(0, 0, ring1 + appsPlotted, ring1 + appsPlotted);
+      ellipse(0, 0, ring2 + appsPlotted, ring2 + appsPlotted);
+      ellipse(0, 0, ring3 + appsPlotted, ring3 + appsPlotted);
+      ellipse(0, 0, ring4 + appsPlotted, ring4 + appsPlotted);
+
+      noStroke();
+      fill("#333333");
+      textFont(PPMono);
+      textSize(10);
+      textAlign(CENTER);
+      text(stateA, 0, 65);
+      pop();
+    }
+
+    if (stateA === stateB) {
+      countyCounter++;
+      circlesDrawn = 1;
+    } else {
+      startX += moveFactorX;
+      stateCounter++;
+      countyCounter = 0;
+      circlesDrawn = 0;
+      if (stateCounter === 10) {
+        startY += moveFactorY;
+        startX = 100;
+        stateCounter = 0;
+      }
+    }
   }
 }
 
@@ -286,7 +340,7 @@ function checkTooltip() {
     if (d < threshold) {
       // Set tooltip info
       tooltipVisible = true;
-      tooltipText = county + " county"+ "\n" + state + "\n$" + perPersonText + " per participant" + "\n" + total + " total participants"; // Customize tooltip text as needed
+      tooltipText = county + " county" + "\n" + state + "\n$" + perPersonText + " per participant" + "\n" + total + " total participants"; // Customize tooltip text as needed
       tooltipX = mouseX + 10; // Adjust tooltip position
       tooltipY = mouseY - 20; // Adjust tooltip position
 
@@ -333,6 +387,7 @@ function zoomIn() {
   scaleFactor *= zoomInFactor;
   moveFactorX *= zoomOutFactor;
   moveFactorY *= zoomOutFactor;
+  pieRadius *= zoomOutFactor;
 }
 
 // Zoom out function
@@ -340,6 +395,7 @@ function zoomOut() {
   scaleFactor *= zoomOutFactor;
   moveFactorX *= zoomInFactor;
   moveFactorY *= zoomInFactor;
+  pieRadius *= zoomOutFactor;
 }
 
 // Call zoom functions based on user input

@@ -4,21 +4,24 @@ let textSizeValue = 6;
 let PPMono;
 
 //Grid Setup
-let scaleFactor = 5;
-let moveFactorX = 135;
-let moveFactorY = 135;
-let pieRadius = 2700;
+let scaleFactor = 4;
+let moveFactorX = 200;
+let moveFactorY = 200;
+let pieRadius = 4000;
 
 // Variables for tooltip
 let lineWeight;
-let tooltipVisible = false;
+let tooltipVisible;
 let tooltipText = "";
 let tooltipX, tooltipY;
-let buffer = 1;
+let textHeight = 70;
+let buffer = 0;
 
 //Testing
 let testLineStartX, testLineStartY;
 let testLineEndX, testLineEndY;
+let threshold = 0.5;
+
 
 // Arrays to hold data
 let countyList = [];
@@ -70,15 +73,16 @@ function draw() {
   locate();
   // console.log(masterCountyData);
   eyeViz2();
+  mouseMoved();
   // console.log(masterCountyData);
-  // console.log(mouseX, mouseY);
+  console.log(mouseX, mouseY);
 }
 
 
 //locateLineValues
 function locate() {
-  let startX = 100;
-  let startY = 100;
+  let startX = 150;
+  let startY = 150;
   let countyCounter = 0;
   let circlesDrawn = 0;
   let stateCounter = 0;
@@ -382,39 +386,64 @@ function colorLogic(percentElderly, percentUnder18) {
   return [red1, green1, blue1];
 }
 
-function checkTooltip(lineStartX, lineEndX, lineStartY, lineEndY, mouseX, mouseY, data) {
-  // Check if mouse is hovering over the line
-  let county = data.county;
-  let perPerson = data.perPerson;
-  let lineX1 = lineStartX;
-  let lineX2 = lineEndX;
-  let lineY1 = lineStartY;
-  let lineY2 = lineEndY;
+function mouseMoved() {
+  checkTooltip();
+}
 
-  if (
-    mouseX >= min(lineX1, lineX2) - buffer &&
-    mouseX <= max(lineX1, lineX2) + buffer &&
-    mouseY >= min(lineY1, lineY2) - buffer &&
-    mouseY <= max(lineY1, lineY2) + buffer
-  ) {
-    // Set tooltip info
-    tooltipVisible = true;
-    tooltipText = `County: ${county}, Per Person: ${perPerson}`; // Customize tooltip text as needed
-    tooltipX = mouseX + 10; // Adjust tooltip position
-    tooltipY = mouseY - 20; // Adjust tooltip position
-  } else {
-    // Hide tooltip
-    tooltipVisible = false;
+function checkTooltip() {
+  for (let i = 0; i < masterCountyData.length; i++) {
+    let data = masterCountyData[i];
+    let county = data.county;
+    let state = data.state;
+    let perPerson = data.perPerson;
+    let perPersonText = perPerson.toFixed(2);
+    let total = data.peopleTotal;
+    let X1 = data.X1;
+    let X2 = data.X2;
+    let Y1 = data.Y1;
+    let Y2 = data.Y2;
+    let d = distToSegment(mouseX, mouseY, X1, Y1, X2, Y2);
+    if (d < threshold) {
+      // Set tooltip info
+      tooltipVisible = true;
+      tooltipText = county + " county"+ "\n" + state + "\n$" + perPersonText + " per participant" + "\n" + total + " total participants"; // Customize tooltip text as needed
+      tooltipX = mouseX + 10; // Adjust tooltip position
+      tooltipY = mouseY - 20; // Adjust tooltip position
+
+      drawTooltip(X1, Y1, X2, Y2);
+      // console.log(county);
+    } else {
+      // Hide tooltip
+      tooltipVisible = false;
+      // console.log("false");
+    }
   }
 }
 
 // Function to draw tooltip
-function drawTooltip() {
-  if (tooltipVisible) {
-    fill(255); // Tooltip background color
-    stroke(0); // Tooltip border color
-    rect(tooltipX, tooltipY, textWidth(tooltipText) + 10, 20); // Draw tooltip rectangle
-    fill(0); // Tooltip text color
-    text(tooltipText, tooltipX + 5, tooltipY + 15); // Draw tooltip text
-  }
+function drawTooltip(X1, Y1, X2, Y2) {
+  //Highlighted Line
+  push();
+  stroke(255, 0, 0);
+  strokeWeight(2);
+  line(X1, Y1, X2, Y2);
+  pop();
+
+  fill(255); // Tooltip background color
+  noStroke(); // Tooltip border color
+  rect(tooltipX, tooltipY, textWidth(tooltipText) + 10, textHeight); // Draw tooltip rectangle
+  fill(0); // Tooltip text color
+  textFont(PPMono)
+  text(tooltipText, tooltipX + 5, tooltipY + 15); // Draw tooltip text
+}
+
+function distToSegment(x, y, x1, y1, x2, y2) {
+  // Calculate the distance between a point (x, y) and a line segment defined by (x1, y1) and (x2, y2)
+  let dx = x2 - x1;
+  let dy = y2 - y1;
+  let t = ((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy);
+  t = constrain(t, 0, 1);
+  let distX = x - (x1 + t * dx);
+  let distY = y - (y1 + t * dy);
+  return sqrt(distX * distX + distY * distY);
 }

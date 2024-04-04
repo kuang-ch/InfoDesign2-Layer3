@@ -4,10 +4,10 @@ let textSizeValue = 6;
 let PPMono;
 
 //Grid Setup
-let scaleFactor = 10;
-let moveFactorX = 125;
-let moveFactorY = 125;
-let pieRadius = 2400;
+let scaleFactor = 5;
+let moveFactorX = 135;
+let moveFactorY = 135;
+let pieRadius = 2700;
 
 // Variables for tooltip
 let lineWeight;
@@ -42,7 +42,9 @@ function preload() {
           X2: 0,
           Y1: 0,
           Y2: 0,
-          Circle2Y: 0,
+          circleX1: 0,
+          circleY1: 0,
+          circleY2: 0,
           appsRadius: 0,
           awardsRadius: 0,
         }
@@ -117,31 +119,38 @@ function locate() {
     let rotatedLineStartY = lineOffset;
     let rotatedLineEndX = 0;
     let rotatedLineEndY = plottedPerPerson + lineOffset;
+    let circleOGX1 = 0;
+    let circleOGY1 = 0;
+    let circleOGY2 = appsPlotted / 2 - awardsPlotted / 2;
 
     let invRotation = -lineRotation;
-    let invTranslationX = -startX;
+    let invTranslationX = startX;
     let invTranslationY = -startY;
 
-    X1 = (rotatedLineStartX * cos(invRotation) - rotatedLineStartY * sin(invRotation) + invTranslationX) * -1;
-    Y1 = (rotatedLineStartX * sin(invRotation) + rotatedLineStartY * cos(invRotation) + invTranslationY) * -1;
-    X2 = (rotatedLineEndX * cos(invRotation) - rotatedLineEndY * sin(invRotation) + invTranslationX) * -1;
-    Y2 = (rotatedLineEndX * sin(invRotation) + rotatedLineEndY * cos(invRotation) + invTranslationY) * -1;
+    X1 = (rotatedLineStartX * cos(invRotation) - rotatedLineStartY * sin(invRotation) - invTranslationX) * -1;
+    Y1 = (rotatedLineStartX * sin(invRotation) + rotatedLineStartY * cos(invRotation) - invTranslationY);
+    X2 = (rotatedLineEndX * cos(invRotation) - rotatedLineEndY * sin(invRotation) - invTranslationX) * -1;
+    Y2 = (rotatedLineEndX * sin(invRotation) + rotatedLineEndY * cos(invRotation) - invTranslationY);
+    circleX1 = (circleOGX1 * cos(invRotation) - rotatedLineStartY * sin(invRotation) - invTranslationX) * -1;
+    circleY1 = (rotatedLineStartX * sin(invRotation) + circleOGY1 * cos(invRotation) - invTranslationY);
+    circleY2 = (rotatedLineStartX * sin(invRotation) + circleOGY2 * cos(invRotation) - invTranslationY);
+
+    // console.log(X1, Y1, X2, Y2);
 
     // Assigning values to line properties in masterCountyData
     masterCountyData[i].X1 = X1;
     masterCountyData[i].X2 = X2;
     masterCountyData[i].Y1 = Y1;
     masterCountyData[i].Y2 = Y2;
-    masterCountyData[i].awardsRadius = awardsPlotted;
-    masterCountyData[i].appsRadiius = appsPlotted;
+    masterCountyData[i].awardsRadius = awardsPlotted / 2;
+    masterCountyData[i].appsRadius = appsPlotted / 2;
+    masterCountyData[i].circleX1 = circleX1;
+    masterCountyData[i].circleY1 = circleY1;
+    masterCountyData[i].circleY2 = circleY2;
     pop();
 
     if (circlesDrawn == 0) {
-      push();
-      translate(startX, startY);
-      pop();
     }
-
     if (stateA === stateCompare) {
       countyCounter++;
       circlesDrawn = 1;
@@ -230,24 +239,6 @@ function eyeViz() {
     push();
     translate(startX, startY);
     rotate(lineRotation);
-
-    // Calculate translated start and end points
-    let rotatedLineStartX = 0;
-    let rotatedLineStartY = lineOffset;
-    let rotatedLineEndX = 0;
-    let rotatedLineEndY = plottedPerPerson + lineOffset;
-
-    // Perform reverse transformations
-    let invRotation = -lineRotation;
-    let invTranslationX = -startX;
-    let invTranslationY = -startY;
-
-
-    lineStartX = (rotatedLineStartX * cos(invRotation) - rotatedLineStartY * sin(invRotation) + invTranslationX) * -1;
-    lineStartY = (rotatedLineStartX * sin(invRotation) + rotatedLineStartY * cos(invRotation) + invTranslationY) * -1;
-    lineEndX = (rotatedLineEndX * cos(invRotation) - rotatedLineEndY * sin(invRotation) + invTranslationX) * -1;
-    lineEndY = (rotatedLineEndX * sin(invRotation) + rotatedLineEndY * cos(invRotation) + invTranslationY) * -1;
-
     stroke(red, green, blue);
     strokeWeight(lineWeight);
     line(0, lineOffset, 0, plottedPerPerson + lineOffset);
@@ -301,14 +292,21 @@ function eyeViz() {
 }
 
 // eyeViz2 function
-function eyeViz2(){
-  for (let j = 0; j < masterCountyData.length - 1; j++){
+function eyeViz2() {
+  let countyCounter = 0;
+  let circlesDrawn = 0;
+  for (let j = 0; j < masterCountyData.length - 1; j++) {
     let data = masterCountyData[j];
     let dataCompare = masterCountyData[j + 1];
 
     let stateA = data.state;
     let stateB = dataCompare.state;
     let county = data.county;
+    let appsPlotted = data.appsRadius;
+    let awardsPlotted = data.awardsRadius;
+    let circleX1 = data.circleX1;
+    let circleY1 = data.circleY1;
+    let circleY2 = data.circleY2;
     let perPerson = data.perPerson;
     let percentUnder18 = data.percentUnder18;
     let percentElderly = data.percentElderly;
@@ -322,22 +320,44 @@ function eyeViz2(){
 
     // Color Logic
     let red1;
-    let green2;
-    let blue3;
-    colorLogic(percentElderly, percentUnder18);
+    let green1;
+    let blue1;
+    [red1, green1, blue1] = colorLogic(percentElderly, percentUnder18);
 
     //Drawing
     lineWeight = 0.5;
     push();
-    stroke(255, 0, 0);
+    stroke(red1, green1, blue1);
     strokeWeight(lineWeight);
     line(X1, Y1, X2, Y2);
     pop();
+
+    //Broken Circle Functionality
+    // if (stateA === stateB){
+    //   countyCounter++;
+    //   circlesDrawn = 1;
+    // } else {
+    //   countyCounter = 0;
+    //   circlesDrawn = 0;
+    // }
+    // if (circlesDrawn == 0){
+    //   push();
+    //   noStroke();
+    //   fill(204);
+    //   ellipse(circleX1, circleY1, appsPlotted * 2, appsPlotted * 2);
+    //   strokeWeight(lineWeight);
+    //   stroke(0);
+    //   fill(50);
+    //   ellipse(circleX1, circleY2, awardsPlotted * 2, awardsPlotted * 2)
+    //   pop();
+    // }
+
+    //Drawing Pie Charts
   }
 }
 
 //Color Logic
-function colorLogic(percentElderly, percentUnder18){
+function colorLogic(percentElderly, percentUnder18) {
   if (percentElderly >= 0.218 && percentUnder18 <= 0.115) {
     red1 = 0;
     green1 = 110;
@@ -359,41 +379,42 @@ function colorLogic(percentElderly, percentUnder18){
     green1 = 204;
     blue1 = 204;
   }
+  return [red1, green1, blue1];
 }
 
-// function checkTooltip(lineStartX, lineEndX, lineStartY, lineEndY, mouseX, mouseY, data) {
-//   // Check if mouse is hovering over the line
-//   let county = data.county;
-//   let perPerson = data.perPerson;
-//   let lineX1 = lineStartX;
-//   let lineX2 = lineEndX;
-//   let lineY1 = lineStartY;
-//   let lineY2 = lineEndY;
+function checkTooltip(lineStartX, lineEndX, lineStartY, lineEndY, mouseX, mouseY, data) {
+  // Check if mouse is hovering over the line
+  let county = data.county;
+  let perPerson = data.perPerson;
+  let lineX1 = lineStartX;
+  let lineX2 = lineEndX;
+  let lineY1 = lineStartY;
+  let lineY2 = lineEndY;
 
-//   if (
-//     mouseX >= min(lineX1, lineX2) - buffer &&
-//     mouseX <= max(lineX1, lineX2) + buffer &&
-//     mouseY >= min(lineY1, lineY2) - buffer &&
-//     mouseY <= max(lineY1, lineY2) + buffer
-//   ) {
-//     // Set tooltip info
-//     tooltipVisible = true;
-//     tooltipText = `County: ${county}, Per Person: ${perPerson}`; // Customize tooltip text as needed
-//     tooltipX = mouseX + 10; // Adjust tooltip position
-//     tooltipY = mouseY - 20; // Adjust tooltip position
-//   } else {
-//     // Hide tooltip
-//     tooltipVisible = false;
-//   }
-// }
+  if (
+    mouseX >= min(lineX1, lineX2) - buffer &&
+    mouseX <= max(lineX1, lineX2) + buffer &&
+    mouseY >= min(lineY1, lineY2) - buffer &&
+    mouseY <= max(lineY1, lineY2) + buffer
+  ) {
+    // Set tooltip info
+    tooltipVisible = true;
+    tooltipText = `County: ${county}, Per Person: ${perPerson}`; // Customize tooltip text as needed
+    tooltipX = mouseX + 10; // Adjust tooltip position
+    tooltipY = mouseY - 20; // Adjust tooltip position
+  } else {
+    // Hide tooltip
+    tooltipVisible = false;
+  }
+}
 
-// // Function to draw tooltip
-// function drawTooltip() {
-//   if (tooltipVisible) {
-//     fill(255); // Tooltip background color
-//     stroke(0); // Tooltip border color
-//     rect(tooltipX, tooltipY, textWidth(tooltipText) + 10, 20); // Draw tooltip rectangle
-//     fill(0); // Tooltip text color
-//     text(tooltipText, tooltipX + 5, tooltipY + 15); // Draw tooltip text
-//   }
-// }
+// Function to draw tooltip
+function drawTooltip() {
+  if (tooltipVisible) {
+    fill(255); // Tooltip background color
+    stroke(0); // Tooltip border color
+    rect(tooltipX, tooltipY, textWidth(tooltipText) + 10, 20); // Draw tooltip rectangle
+    fill(0); // Tooltip text color
+    text(tooltipText, tooltipX + 5, tooltipY + 15); // Draw tooltip text
+  }
+}

@@ -62,7 +62,7 @@ function mouseMoved() {
     text(tooltipText, popUpX + 5, popUpY + 50); // Draw tooltip text
   
     for(let i = 0; i<stateSubarray.length; i++){
-    console.log(stateSubarray[1].county);
+    console.log(stateSubarray[1]);
     }
   }
   
@@ -75,4 +75,8 @@ function mouseMoved() {
     let distX = x - (x1 + t * dx);
     let distY = y - (y1 + t * dy);
     return sqrt(distX * distX + distY * distY);
+  }
+
+  function closerLook(){
+
   }

@@ -30,8 +30,8 @@ let testLineEndX, testLineEndY;
 let threshold = 0.5;
 
 // Define zoom factors
-let zoomInFactor = 1; // Increase scaleFactor by 10% for zoom in
-let zoomOutFactor = 1; // Decrease scaleFactor by 10% for zoom out
+let zoomInFactor = 1.1; // Increase scaleFactor by 10% for zoom in
+let zoomOutFactor = 0.9; // Decrease scaleFactor by 10% for zoom out
 
 // Arrays to hold data
 let countyList = [];

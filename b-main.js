@@ -87,7 +87,9 @@ function draw() {
   locate();
   drawCircles();
   eyeViz();
-  mouseMoved();
+  checkTooltip();
+  console.log(clickedText);
+  console.log(mouseClickedFlag);
 
   push();
   stroke(255, 0, 0);

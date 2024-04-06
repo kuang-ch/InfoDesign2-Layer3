@@ -1,6 +1,6 @@
 let mouseClickedFlag = false;
-let clickedX;
-let clickedY;
+let clickedX = 0;
+let clickedY = 0;
 
 function mouseClicked() {
   if (!mouseClickedFlag) {
@@ -14,7 +14,16 @@ function mouseClicked() {
   }
 }
 
-function checkThreshold() {  
+function tooltipPanel(){
+  if(!mouseClickedFlag){
+    checkThreshold(mouseX, mouseY);
+  } else {
+    checkThreshold(clickedX, clickedY);
+    console.log("clicked ran");
+  }
+}
+
+function checkThreshold(userX, userY) {  
   for (let i = 0; i < masterCountyData.length; i++) {
     let data = masterCountyData[i];
     let county = data.county;
@@ -31,18 +40,13 @@ function checkThreshold() {
     let green1 = data.green1;
     let blue1 = data.blue1;
 
-    let d = distToSegment(mouseX, mouseY, X1, Y1, X2, Y2);
-    let e = distToSegment(clickedX, clickedY, X1, Y1, X2, Y2);
+    let d = distToSegment(userX, userY, X1, Y1, X2, Y2);
     tooltipText = county + " county" + "\n" + state + "\n$" + perPersonText + " per participant" + "\n" + total + " total participants"; // Customize tooltip text as needed
 
     // let stateSubarray = masterCountyData.filter(item => item.state === state);
-    if (!mouseClickedFlag) {
       if (d < threshold) {
         drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipText);
       }
-    } else {
-      if (e < threshold)
-    }
   }
 }
 

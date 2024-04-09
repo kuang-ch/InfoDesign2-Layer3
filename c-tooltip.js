@@ -29,7 +29,9 @@ function checkThreshold(userX, userY) {
     let county = data.county;
     let state = data.state;
     let perPersonText = data.perPerson.toFixed(2);
-    let total = data.total;
+    let total = data.peopleTotal;
+    
+    console.log(total);
 
     let X1 = data.X1;
     let X2 = data.X2;
@@ -41,7 +43,7 @@ function checkThreshold(userX, userY) {
     let blue1 = data.blue1;
 
     let d = distToSegment(userX, userY, X1, Y1, X2, Y2);
-    tooltipText = county + " county" + "\n" + state + "\n$" + perPersonText + " per participant" + "\n" + total + " total participants"; // Customize tooltip text as needed
+    tooltipText = county + " county" + "\n" + state + "\n$" + perPersonText + " per participant" + "\n"; // Customize tooltip text as needed
 
     // let stateSubarray = masterCountyData.filter(item => item.state === state);
       if (d < threshold) {

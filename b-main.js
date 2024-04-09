@@ -28,7 +28,7 @@ let buffer = 0;
 //Testing
 let testLineStartX, testLineStartY;
 let testLineEndX, testLineEndY;
-let threshold = 0.5;
+let threshold = 1;
 
 // Define zoom factors
 let zoomInFactor = 1; // Increase scaleFactor by 10% for zoom in
@@ -73,7 +73,7 @@ function preload() {
 
 // Setup function
 function setup() {
-  createCanvas(1600, 2750);
+  createCanvas(1600, 3250);
 
   if (PPMono === null) {
     console.error("Error loading the table. Make sure the file is in the correct location.");
@@ -86,7 +86,7 @@ function setup() {
 function draw() {
   locate();
   drawCircles();
-  eyeViz();
+  eyeViz(masterCountyData);
   tooltipPanel();
   // console.log(mouseClickedFlag);
   // console.log(clickedX, clickedY);
@@ -94,7 +94,7 @@ function draw() {
   push();
   stroke(255, 0, 0);
   strokeWeight(1);
-  line(900, 0, 900, 1000)
+  line(900, 0, 900, 1000);
   pop();
 
   // console.log(masterCountyData);

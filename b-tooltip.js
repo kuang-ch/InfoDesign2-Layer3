@@ -29,7 +29,16 @@ function checkThreshold(userX, userY) {
     let county = data.county;
     let state = data.state;
     let perPersonText = data.perPerson.toFixed(2);
-    let total = data.total;
+    let total = data.peopleTotal;
+
+    let percentUnder18 = data.percentUnder18;
+    let percentElderly = data.percentElderly;
+    let percentWorking = 1 - percentUnder18 - percentElderly;
+
+    let printUnder18 = (percentUnder18 * 100).toFixed(2);
+    let printElderly = (percentElderly * 100).toFixed(2);
+    let printWorking = (percentWorking * 100).toFixed(2);
+
 
     let X1 = data.X1;
     let X2 = data.X2;
@@ -41,11 +50,19 @@ function checkThreshold(userX, userY) {
     let blue1 = data.blue1;
 
     let d = distToSegment(userX, userY, X1, Y1, X2, Y2);
-    tooltipText = county + " county" + "\n" + state + "\n$" + perPersonText + " per participant" + "\n" + total + " total participants"; // Customize tooltip text as needed
+   
+    tooltipText = county + " county" + 
+    "\n" + state + 
+    "\n$" + perPersonText + " per participant" + 
+    "\n" + total + " total participants" +
+    "\n\n" + printUnder18 + "% participants younger than 18" +
+    "\n" + printWorking + "% participants aged 18 to 65" +
+    "\n" + printElderly + "% participants older than 65"; // Customize tooltip text as needed
 
-    // let stateSubarray = masterCountyData.filter(item => item.state === state);
+    let stateSubarray = masterCountyData.filter(item => item.state === state);
       if (d < threshold) {
         drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipText);
+        tooltipCallout(stateSubarray, data);
       }
   }
 }
@@ -83,4 +100,68 @@ function drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipDisplay) {
   fill(0); // Tooltip text color
   textFont(PPMono)
   text(tooltipDisplay, popUpX + 5, popUpY + 50); // Draw tooltip text
+}
+
+function tooltipCallout(dataArray, highlightedLine) {
+  let countyCounter = 0;
+  let circlesDrawn = 0;
+  for (let j = 0; j < dataArray.length; j++) {
+    let data = dataArray[j];
+    let special = highlightedLine;
+
+    let perPerson = data.perPerson;
+    let county = data.county;
+    let appsPlotted = data.appsRadius;
+    let awardsPlotted = data.awardsRadius;
+
+    let red1 = data.red1;
+    let green1 = data.green1;
+    let blue1 = data.blue1;
+
+    let plottedPerPerson = (perPerson - 371.79) / 2;
+
+    //Drawing
+    let angleIncrement = radians(360.0 / 202);
+    let lineRotation = HALF_PI + (angleIncrement * countyCounter);
+    let lineOffset = appsPlotted * 2;
+
+    if (county == special.county){
+      lineWeight = 2;
+      alpha1 = 255;
+    } else {
+      lineWeight = 1;
+      alpha1 = 100;
+    }
+
+    push();
+    translate(1175, window.scrollY + 400);
+    rotate(lineRotation);
+    stroke(red1, green1, blue1, alpha1);
+    strokeWeight(lineWeight);
+    line(0, lineOffset, 0, plottedPerPerson + lineOffset);
+    pop();
+
+    if (circlesDrawn == 0){
+      let awards = data.awards;
+      let apps = data.apps;
+      let acceptance = awards/apps;
+      let acceptanceDisplay = (acceptance*100).toFixed(2) + "% acceptance rate";
+
+      push();
+      translate(1175, window.scrollY + 400);
+      noStroke();
+      fill(204);
+      ellipse(0, 0, appsPlotted * 4, appsPlotted * 4);
+      fill(255, 0, 100);
+      ellipse(0, appsPlotted * 2 - awardsPlotted * 2, awardsPlotted * 4, awardsPlotted *4);
+      textAlign(CENTER, CENTER);
+      textSize(12);
+      textFont(PPMono);
+      text(acceptanceDisplay, 0, appsPlotted * 4 + 50);
+      pop();
+
+      circlesDrawn = 1;
+    }
+    countyCounter++;
+  }
 }

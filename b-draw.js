@@ -1,10 +1,10 @@
 // eyeViz2 function
-function eyeViz() {
+function eyeViz(dataArray) {
     let countyCounter = 0;
     let circlesDrawn = 0;
-    for (let j = 0; j < masterCountyData.length - 1; j++) {
-      let data = masterCountyData[j];
-      let dataCompare = masterCountyData[j + 1];
+    for (let j = 0; j < dataArray.length - 1; j++) {
+      let data = dataArray[j];
+      let dataCompare = dataArray[j + 1];
   
       let stateA = data.state;
       let stateB = dataCompare.state;
@@ -55,7 +55,9 @@ function eyeViz() {
     for (let i = 0; i < masterCountyData.length - 1; i++) {
       let data = masterCountyData[i];
       let dataCompare = masterCountyData[i + 1];
-  
+      let circleX = data.X1;
+      let circleY = data.circleY1;
+
       let stateA = data.state;
       let stateB = dataCompare.state;
   
@@ -71,6 +73,8 @@ function eyeViz() {
       let ring3 = ((600 - 371.79) / scaleFactor) * 2;
       let ring4 = ((700 - 371.79) / scaleFactor) * 2;
   
+      // let hoverColor = distToCircle(circleX, circleY, appsPlotted, mouseX, mouseY);
+      
       if (circlesDrawn == 0) {
         push();
         translate(startX, startY);
@@ -80,7 +84,7 @@ function eyeViz() {
         strokeWeight(0.5);
         stroke(0);
         fill(50);
-        ellipse(0, appsPlotted / 2 - awardsPlotted - 2, awardsPlotted, awardsPlotted);
+        ellipse(0, appsPlotted / 2 - awardsPlotted / 2, awardsPlotted, awardsPlotted);
   
         noFill();
         stroke(75, 75, 75, 100);

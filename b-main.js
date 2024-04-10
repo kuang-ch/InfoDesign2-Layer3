@@ -12,7 +12,7 @@ let pieRadius = 4000;
 
 //StateCounterSetup
 let firstPointX = 150;
-let firstPointY = 150;
+let firstPointY = 300;
 // let countyCounter = 0;
 // let circlesDrawn = 0;
 // let stateCounter = 0;
@@ -38,8 +38,17 @@ let zoomOutFactor = 1; // Decrease scaleFactor by 10% for zoom out
 let countyList = [];
 let processedStates = {};
 
+//Key Button
+let img;
+let keyButton;
+let keyButtonPressed = false;
+let imgWidth = 900;
+let imgHeight = 800;
+
 // Preload function to load external data
 function preload() {
+  img = loadImage('assets/key.jpg');
+
   table = loadTable('assets/masterDF.csv'
     , 'csv', 'header', () => {
       for (let row of table.rows) {
@@ -81,6 +90,10 @@ function setup() {
   } else {
   }
 
+  keyButton = createButton(`How to Read`);
+  keyButton.addClass('custom-button')
+  keyButton.position(775, 40);
+  keyButton.mousePressed(toggleButton);
 }
 // Draw function
 function draw() {  
@@ -94,6 +107,11 @@ function draw() {
   pop();
 
   tooltipPanel();
+
+  displayImage();
+  titleDraw();
+
+  // console.log(windowWidth, windowHeight);
   // console.log(mouseClickedFlag);
   // console.log(clickedX, clickedY);
 

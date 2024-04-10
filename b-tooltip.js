@@ -14,31 +14,21 @@ function mouseClicked() {
   }
 }
 
-function tooltipPanel(){
-  if(!mouseClickedFlag){
+function tooltipPanel() {
+  if (!mouseClickedFlag) {
     checkThreshold(mouseX, mouseY);
   } else {
     checkThreshold(clickedX, clickedY);
-    console.log("clicked ran");
   }
 }
 
-function checkThreshold(userX, userY) {  
+function checkThreshold(userX, userY) {
   for (let i = 0; i < masterCountyData.length; i++) {
     let data = masterCountyData[i];
     let county = data.county;
     let state = data.state;
     let perPersonText = data.perPerson.toFixed(2);
     let total = data.peopleTotal;
-
-    let percentUnder18 = data.percentUnder18;
-    let percentElderly = data.percentElderly;
-    let percentWorking = 1 - percentUnder18 - percentElderly;
-
-    let printUnder18 = (percentUnder18 * 100).toFixed(2);
-    let printElderly = (percentElderly * 100).toFixed(2);
-    let printWorking = (percentWorking * 100).toFixed(2);
-
 
     let X1 = data.X1;
     let X2 = data.X2;
@@ -50,20 +40,34 @@ function checkThreshold(userX, userY) {
     let blue1 = data.blue1;
 
     let d = distToSegment(userX, userY, X1, Y1, X2, Y2);
-   
-    tooltipText = county + " county" + 
-    "\n" + state + 
-    "\n$" + perPersonText + " per participant" + 
-    "\n" + total + " total participants" +
-    "\n\n" + printUnder18 + "% participants younger than 18" +
-    "\n" + printWorking + "% participants aged 18 to 65" +
-    "\n" + printElderly + "% participants older than 65"; // Customize tooltip text as needed
+
+    //Radar Plot
+    let radarScaleFactor = 1;
+    
+    let percentUnder18 = data.percentUnder18;
+    let percentElderly = data.percentElderly;
+    let percentWorking = 1 - percentUnder18 - percentElderly;
+
+    let printUnder18 = (percentUnder18 * 100).toFixed(2);
+    let printElderly = (percentElderly * 100).toFixed(2);
+    let printWorking = (100 - printUnder18 - printElderly).toFixed(2);
+
+    //TooltipText
+    tooltipText1 = county + " county" +
+      "\n" + state +
+      "\n$" + perPersonText + " per participant" +
+      "\n" + total + " total participants";
+
+    tooltipText2 = printUnder18 + "% participants younger than 18";
+    tooltipText3 = printWorking + "% participants aged 18 to 65";
+    tooltipText4 = printElderly + "% participants older than 65"; 
 
     let stateSubarray = masterCountyData.filter(item => item.state === state);
-      if (d < threshold) {
-        drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipText);
-        tooltipCallout(stateSubarray, data);
-      }
+    if (d < threshold) {
+      drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipText1, tooltipText2, tooltipText3, tooltipText4);
+      tooltipCallout(stateSubarray, data);
+      radarPlot(radarScaleFactor, printUnder18, printElderly, printWorking)
+    }
   }
 }
 
@@ -78,7 +82,7 @@ function distToSegment(x, y, x1, y1, x2, y2) {
   return sqrt(distX * distX + distY * distY);
 }
 
-function drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipDisplay) {
+function drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipDisplay1, tooltipDisplay2, tooltipDisplay3, tooltipDisplay4) {
   let popUpX = 925;
   let popUpY = window.scrollY;
 
@@ -98,12 +102,23 @@ function drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipDisplay) {
   noStroke(); // Tooltip border color
   fill(255); // Tooltip text color
   textFont(PPMono)
-  text(tooltipDisplay, popUpX + 5, popUpY + 50); // Draw tooltip text
+  text(tooltipDisplay1, popUpX + 5, popUpY + 50); // Draw tooltip text
+  fill(252, 179, 22);
+  text(tooltipDisplay2, popUpX + 5, popUpY + 500); // Draw tooltip text
+  fill(204, 204, 204);
+  text(tooltipDisplay3, popUpX + 5, popUpY + 514); // Draw tooltip text
+  fill(0, 110, 184);
+  text(tooltipDisplay4, popUpX + 5, popUpY + 528); // Draw tooltip text
+
 }
 
-function tooltipCallout(dataArray, highlightedLine) {
+function tooltipCallout(dataArray, highlightedLine) { //Redraws the "Flower" on the tooltip side
   let countyCounter = 0;
   let circlesDrawn = 0;
+  let totalUnder18 = 0;
+  let totalElderly = 0;
+  let totalWorking = 0;
+
   for (let j = 0; j < dataArray.length; j++) {
     let data = dataArray[j];
     let special = highlightedLine;
@@ -124,43 +139,106 @@ function tooltipCallout(dataArray, highlightedLine) {
     let lineRotation = HALF_PI + (angleIncrement * countyCounter);
     let lineOffset = appsPlotted * 2 + 5;
 
-    if (county == special.county){
+    if (county == special.county) {
       lineWeight = 2;
       alpha1 = 255;
     } else {
       lineWeight = 1;
       alpha1 = 100;
+      alphaRadar = 255;
     }
 
     push();
-    translate(1175, window.scrollY + 400);
+    translate(1175, window.scrollY + 350);
     rotate(lineRotation);
     stroke(red1, green1, blue1, alpha1);
     strokeWeight(lineWeight);
     line(0, lineOffset, 0, plottedPerPerson + lineOffset);
     pop();
 
-    if (circlesDrawn == 0){
+    if (circlesDrawn == 0) {
       let awards = data.awards;
       let apps = data.apps;
-      let acceptance = awards/apps;
-      let acceptanceDisplay = (acceptance*100).toFixed(2) + "% acceptance rate";
+      let acceptance = awards / apps;
+      let acceptanceDisplay = (acceptance * 100).toFixed(2) + "% acceptance rate";
 
       push();
-      translate(1175, window.scrollY + 400);
+      textAlign(LEFT, TOP);
+      textSize(16);
+      textFont(PPMono);
+      text(acceptanceDisplay, 930, 120);
+      pop();
+
+      push();
+      translate(1175, window.scrollY + 350);
       noStroke();
       fill(204);
       ellipse(0, 0, appsPlotted * 4, appsPlotted * 4);
       fill(255, 0, 100);
-      ellipse(0, appsPlotted * 2 - awardsPlotted * 2, awardsPlotted * 4, awardsPlotted *4);
-      textAlign(CENTER, CENTER);
-      textSize(12);
-      textFont(PPMono);
-      text(acceptanceDisplay, 0, appsPlotted * 4 + 50);
+      ellipse(0, appsPlotted * 2 - awardsPlotted * 2, awardsPlotted * 4, awardsPlotted * 4);
       pop();
 
       circlesDrawn = 1;
     }
-    countyCounter++;
+        countyCounter++;
   }
+}
+
+function radarPlot(radarScaleFactor, inputUnder18, inputElderly, inputWorking) {
+  let radarX = 1175;
+  let radarY = 650 + window.scrollY;
+  let radarStrokeWeight = 2;
+  let radarScaleFactorCircles = radarScaleFactor;
+
+  let specialUnder18 = inputUnder18 * radarScaleFactor;
+  let specialElderly = inputElderly * radarScaleFactor;
+  let specialWorking = inputWorking * radarScaleFactor;
+
+  // console.log(specialWorking, specialUnder18);
+
+  //Circles
+  push();
+  translate(radarX, radarY);
+  noFill();
+  stroke(200, 200, 200);
+  strokeWeight(1);
+  ellipse(0, 0, 40 * radarScaleFactorCircles, 40 * radarScaleFactorCircles);
+  ellipse(0, 0, 80 * radarScaleFactorCircles, 80 * radarScaleFactorCircles);
+  ellipse(0, 0, 120 * radarScaleFactorCircles, 120 * radarScaleFactorCircles);
+  ellipse(0, 0, 160 * radarScaleFactorCircles, 160 * radarScaleFactorCircles);
+  ellipse(0, 0, 200 * radarScaleFactorCircles, 200 * radarScaleFactorCircles);
+  strokeWeight(0.5);
+    // ellipse(0, 0, 20 * radarScaleFactorCircles, 20 * radarScaleFactorCircles);
+    // ellipse(0, 0, 60 * radarScaleFactorCircles, 60 * radarScaleFactorCircles);
+    // ellipse(0, 0, 100 * radarScaleFactorCircles, 100 * radarScaleFactorCircles);
+    // ellipse(0, 0, 140 * radarScaleFactorCircles, 140 * radarScaleFactorCircles);
+    // ellipse(0, 0, 180 * radarScaleFactorCircles, 180 * radarScaleFactorCircles);
+  pop();
+
+
+  //Under18
+  push();
+  translate(radarX, radarY);
+  stroke(252, 179, 22);
+  strokeWeight(radarStrokeWeight);
+  line(0, 0, 0, specialUnder18);
+  pop();
+
+  //Working
+  push();
+  translate(radarX, radarY);
+  rotate((TWO_PI)/3);
+  stroke(204, 204, 204);
+  strokeWeight(radarStrokeWeight);
+  line(0, 0, 0, specialWorking);
+  pop();
+
+  //Elderly
+  push();
+  translate(radarX, radarY);
+  rotate(((TWO_PI)/3)*2);
+  stroke(0, 110, 184);
+  strokeWeight(radarStrokeWeight);
+  line(0, 0, 0, specialElderly);
+  pop();
 }

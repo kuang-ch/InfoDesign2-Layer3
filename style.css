@@ -7,50 +7,23 @@ canvas {
   display: block;
 }
 
-#mySlider {
-  z-index: 1;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  background-color: #ebebeb !important;
-
-  cursor: none;
-  border-radius: 5px;
-  width: 10px;
-  height: 10px;
+@font-face {
+  font-family: 'PPMono';
+  src: url('assets/PPSupplyMono-Regular.otf') format('opentype'); /* Relative path to your font file */
 }
 
-#mySlider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  /* Set thumb color */
-  background-color: #333333;
-
-  /* Set thumb dimensions */
-  width: 15px;
-  height: 15px;
-
-  border-radius: 50%;
-}
-
-#mbtaMap {
-  height: 800px; /* Set a specific height */
-}
-
-#mbtaMap {
-  position: relative;
-  z-index: 1;
-  background-color: lightblue;
-  width: 100vW;
-  height: 100vH;
-  display: block;
-}
-
-#intro {
-  position: relative;
-  z-index: 2;
-  background-color: rgba(255, 255, 255, 0.7); /* Transparent white background */
-  width: 100vW;
-  height: 100vH;
-  display: none; /* Initially hidden */
+.custom-button {
+  background-color: #000000; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-family: 'PPMono';
+  font-size: 10px;
+  margin: 4px 2px;
+  transition-duration: 0.0s;
+  cursor: pointer;
+  border-radius: 12px;
 }

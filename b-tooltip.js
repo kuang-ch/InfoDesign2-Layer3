@@ -84,7 +84,7 @@ function drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipDisplay) {
 
   //background rectangle
   push();
-  fill(255);
+  fill(0);
   rect(900, window.scrollY, 700, 800);
   pop();
 
@@ -95,9 +95,8 @@ function drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipDisplay) {
   line(X1, Y1, X2, Y2);
   pop();
 
-  fill(255); // Tooltip background color
   noStroke(); // Tooltip border color
-  fill(0); // Tooltip text color
+  fill(255); // Tooltip text color
   textFont(PPMono)
   text(tooltipDisplay, popUpX + 5, popUpY + 50); // Draw tooltip text
 }
@@ -123,7 +122,7 @@ function tooltipCallout(dataArray, highlightedLine) {
     //Drawing
     let angleIncrement = radians(360.0 / 202);
     let lineRotation = HALF_PI + (angleIncrement * countyCounter);
-    let lineOffset = appsPlotted * 2;
+    let lineOffset = appsPlotted * 2 + 5;
 
     if (county == special.county){
       lineWeight = 2;

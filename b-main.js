@@ -83,19 +83,19 @@ function setup() {
 
 }
 // Draw function
-function draw() {
+function draw() {  
   locate();
   drawCircles();
   eyeViz(masterCountyData);
+
+  push();
+  fill(0);
+  rect(900, 0, 700, 3250);
+  pop();
+
   tooltipPanel();
   // console.log(mouseClickedFlag);
   // console.log(clickedX, clickedY);
-
-  push();
-  stroke(255, 0, 0);
-  strokeWeight(1);
-  line(900, 0, 900, 1000);
-  pop();
 
   // console.log(masterCountyData);
   // console.log(mouseX, mouseY);

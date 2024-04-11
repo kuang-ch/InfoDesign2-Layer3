@@ -82,7 +82,7 @@ function preload() {
 
 // Setup function
 function setup() {
-  createCanvas(1600, 3250);
+  createCanvas(1600, 3500);
 
   if (PPMono === null) {
     console.error("Error loading the table. Make sure the file is in the correct location.");
@@ -102,8 +102,8 @@ function draw() {
   eyeViz(masterCountyData);
 
   push();
-  fill(0);
-  rect(900, 0, 700, 3250);
+  fill(250);
+  rect(900, 0, 700, 3500);
   pop();
 
   tooltipPanel();

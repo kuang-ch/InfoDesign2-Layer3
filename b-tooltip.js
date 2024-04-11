@@ -88,7 +88,7 @@ function drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipDisplay1, toolt
 
   //background rectangle
   push();
-  fill(0);
+  fill(250);
   rect(900, window.scrollY, 700, 800);
   pop();
 
@@ -100,7 +100,7 @@ function drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipDisplay1, toolt
   pop();
 
   noStroke(); // Tooltip border color
-  fill(255); // Tooltip text color
+  fill(0); // Tooltip text color
   textFont(PPMono)
   text(tooltipDisplay1, popUpX + 5, popUpY + 50); // Draw tooltip text
   fill(252, 179, 22);
@@ -163,6 +163,7 @@ function tooltipCallout(dataArray, highlightedLine) { //Redraws the "Flower" on 
       let acceptanceDisplay = (acceptance * 100).toFixed(2) + "% acceptance rate";
 
       push();
+      fill(255, 0, 100);
       textAlign(LEFT, TOP);
       textSize(16);
       textFont(PPMono);

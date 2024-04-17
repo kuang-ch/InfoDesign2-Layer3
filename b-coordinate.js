@@ -25,6 +25,9 @@ function locate() {
       let plottedPerPerson = (perPerson - 371.79) / scaleFactor;
       let appsPlotted = Math.sqrt(map(apps, 0, 150000, 0, pieRadius));
       let awardsPlotted = Math.sqrt(map(awards, 0, 150000, 0, pieRadius));
+      
+      let ring4 = ((700 - 371.79) / scaleFactor) * 2;
+      let circleRadius  = awardsPlotted + ring4;
   
       // Translation and Rotation
       let angleIncrement = radians(360.0 / 202);
@@ -44,7 +47,7 @@ function locate() {
       let circleOGX1 = 0;
       let circleOGY1 = 0;
       let circleOGY2 = appsPlotted / 2 - awardsPlotted / 2;
-  
+
       let invRotation = -lineRotation;
       let invTranslationX = startX;
       let invTranslationY = -startY;
@@ -55,7 +58,6 @@ function locate() {
       Y2 = (rotatedLineEndX * sin(invRotation) + rotatedLineEndY * cos(invRotation) - invTranslationY);
       circleX1 = (circleOGX1 * cos(invRotation) - rotatedLineStartY * sin(invRotation) - invTranslationX) * -1;
       circleY1 = (rotatedLineStartX * sin(invRotation) + circleOGY1 * cos(invRotation) - invTranslationY);
-      circleY2 = (rotatedLineStartX * sin(invRotation) + circleOGY2 * cos(invRotation) - invTranslationY);
   
       // Assigning values to line properties in masterCountyData
       masterCountyData[i].X1 = X1;
@@ -66,7 +68,7 @@ function locate() {
       masterCountyData[i].appsRadius = appsPlotted / 2;
       masterCountyData[i].circleX1 = circleX1;
       masterCountyData[i].circleY1 = circleY1;
-      masterCountyData[i].circleY2 = circleY2;
+      masterCountyData[i].circleRadius = circleRadius;
       pop();
   
       if (circlesDrawn == 0) {

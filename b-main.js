@@ -67,7 +67,7 @@ function preload() {
           Y2: 0,
           circleX1: 0,
           circleY1: 0,
-          circleY2: 0,
+          circleRadius: 0,
           appsRadius: 0,
           awardsRadius: 0,
           red1: 0,
@@ -107,6 +107,7 @@ function draw() {
   pop();
 
   tooltipPanel();
+  stateHover();
 
   displayImage();
   titleDraw();

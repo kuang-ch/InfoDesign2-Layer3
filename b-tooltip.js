@@ -1,4 +1,5 @@
 let mouseClickedFlag = false;
+let stateHoverFlag = false;
 let clickedX = 0;
 let clickedY = 0;
 
@@ -34,6 +35,8 @@ function checkThreshold(userX, userY) {
     let X2 = data.X2;
     let Y1 = data.Y1;
     let Y2 = data.Y2;
+    let circleY1 = data.circleY1;
+    let circleRadius = data.circleRadius;
 
     let red1 = data.red1;
     let green1 = data.green1;
@@ -63,6 +66,7 @@ function checkThreshold(userX, userY) {
     tooltipText4 = printElderly + "% participants older than 65"; 
 
     let stateSubarray = masterCountyData.filter(item => item.state === state);
+
     if (d < threshold) {
       drawTooltip(X1, Y1, X2, Y2, red1, green1, blue1, tooltipText1, tooltipText2, tooltipText3, tooltipText4);
       tooltipCallout(stateSubarray, data);
@@ -242,4 +246,22 @@ function radarPlot(radarScaleFactor, inputUnder18, inputElderly, inputWorking) {
   strokeWeight(radarStrokeWeight);
   line(0, 0, 0, specialElderly);
   pop();
+}
+
+function stateHover(){
+  for (let i = 0; i < masterCountyData.length; i++){
+    let data = masterCountyData[i];
+    let pointX = data.X1;
+    let pointY = data.circleY1;
+    let distanceThreshold = data.circleRadius;
+    let state = data.state;
+
+  if (dist(mouseX, mouseY, pointX, pointY) < distanceThreshold / 2) {
+      noStroke();
+      fill(0, 255, 0);
+      ellipse(0, 0 + window.scrollY, distanceThreshold, distanceThreshold);
+      console.log(state);
+    }
+
+}
 }

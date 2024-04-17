@@ -90,9 +90,9 @@ function setup() {
   } else {
   }
 
-  keyButton = createButton(`How to Read`);
+  keyButton = createButton(`?`);
   keyButton.addClass('custom-button')
-  keyButton.position(775, 40);
+  keyButton.position(800, 40);
   keyButton.mousePressed(toggleButton);
 }
 // Draw function

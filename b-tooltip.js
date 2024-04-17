@@ -167,7 +167,7 @@ function tooltipCallout(dataArray, highlightedLine) { //Redraws the "Flower" on 
       textAlign(LEFT, TOP);
       textSize(16);
       textFont(PPMono);
-      text(acceptanceDisplay, 930, 120);
+      text(acceptanceDisplay, 930, 120 + window.scrollY);
       pop();
 
       push();

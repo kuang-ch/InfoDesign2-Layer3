@@ -1,6 +1,6 @@
 //Title
 function titleDraw(){
-  let title = "Supplemental Security" + "\n" + "Income (SSI) in the U.S."
+  let title = "Supplemental Security" + "\n" + "Income in the U.S."
   
   push();
   fill("#333333");

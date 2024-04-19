@@ -265,3 +265,11 @@ function stateHover(){
 
 }
 }
+
+function stateHoverOpacity(pointX, pointY, stateCircleThreshold){
+  if(dist(mouseX, mouseY, pointX, pointY) < (stateCircleThreshold / 2)){
+    return 255;
+  } else {
+    return 100;
+  }
+}

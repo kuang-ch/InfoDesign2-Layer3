@@ -1,29 +1,19 @@
 // eyeViz2 function
 function eyeViz(dataArray) {
-    let countyCounter = 0;
-    let circlesDrawn = 0;
-    for (let j = 0; j < dataArray.length - 1; j++) {
+    for (let j = 0; j < dataArray.length; j++) {
+      //Fetching Data
       let data = dataArray[j];
-      let dataCompare = dataArray[j + 1];
-  
-      let stateA = data.state;
-      let stateB = dataCompare.state;
-      let county = data.county;
-      let appsPlotted = data.appsRadius;
-      let awardsPlotted = data.awardsRadius;
-      let circleX1 = data.circleX1;
-      let circleY1 = data.circleY1;
-      let circleY2 = data.circleY2;
       let perPerson = data.perPerson;
       let percentUnder18 = data.percentUnder18;
       let percentElderly = data.percentElderly;
   
+      //Line Coordinates
       let X1 = data.X1;
       let X2 = data.X2;
       let Y1 = data.Y1;
       let Y2 = data.Y2;
-  
-      let plottedPerPerson = (perPerson - 371.79) / scaleFactor;
+      let circleY = data.circleY1;
+      let circleThreshold = data.circleRadius;
   
       // Color Logic
       let red1;
@@ -34,12 +24,14 @@ function eyeViz(dataArray) {
       masterCountyData[j].red1 = red1;
       masterCountyData[j].green1 = green1;
       masterCountyData[j].blue1 = blue1;
-  
-  
+
+      //Checking Theshold
+      let lineOpacity = stateHoverOpacity(X1, circleY, circleThreshold)
+      
       //Drawing
       lineWeight = 0.5;
       push();
-      stroke(red1, green1, blue1);
+      stroke(red1, green1, blue1, lineOpacity);
       strokeWeight(lineWeight);
       line(X1, Y1, X2, Y2);
       pop();
@@ -57,6 +49,7 @@ function eyeViz(dataArray) {
       let dataCompare = masterCountyData[i + 1];
       let circleX = data.X1;
       let circleY = data.circleY1;
+      let circleThreshold = data.circleRadius;
 
       let stateA = data.state;
       let stateB = dataCompare.state;
@@ -73,28 +66,29 @@ function eyeViz(dataArray) {
       let ring3 = ((600 - 371.79) / scaleFactor) * 2;
       let ring4 = ((700 - 371.79) / scaleFactor) * 2;
   
-      // let hoverColor = distToCircle(circleX, circleY, appsPlotted, mouseX, mouseY);
+      //Checking Theshold
+      let lineOpacity = stateHoverOpacity(circleX, circleY, circleThreshold)
       
       if (circlesDrawn == 0) {
         push();
         translate(startX, startY);
         noStroke();
-        fill(204);
+        fill(204, 204, 204, lineOpacity);
         ellipse(0, 0, appsPlotted, appsPlotted);
         strokeWeight(0.5);
-        stroke(0);
-        fill(50);
+        stroke(0, 0, 0, lineOpacity);
+        fill(50, 50, 50, lineOpacity);
         ellipse(0, appsPlotted / 2 - awardsPlotted / 2, awardsPlotted, awardsPlotted);
   
         noFill();
-        stroke(75, 75, 75, 100);
+        stroke(75, 75, 75, (100 * lineOpacity/255));
         ellipse(0, 0, ring1 + appsPlotted, ring1 + appsPlotted);
         ellipse(0, 0, ring2 + appsPlotted, ring2 + appsPlotted);
         ellipse(0, 0, ring3 + appsPlotted, ring3 + appsPlotted);
         ellipse(0, 0, ring4 + appsPlotted, ring4 + appsPlotted);
   
         noStroke();
-        fill("#333333");
+        fill(color("#333333"), lineOpacity);
         textFont(PPMono);
         textSize(10);
         textAlign(CENTER);

@@ -107,7 +107,6 @@ function draw() {
   pop();
 
   tooltipPanel();
-  stateHover();
 
   displayImage();
   titleDraw();

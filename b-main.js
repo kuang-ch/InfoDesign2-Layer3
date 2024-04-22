@@ -7,7 +7,7 @@ let PPMono;
 let statePerRow = 4;
 let scaleFactor = 4.5;
 let moveFactorX = 200;
-let moveFactorY = 250;
+let moveFactorY = 300;
 let pieRadius = 4000;
 
 //StateCounterSetup
@@ -82,7 +82,7 @@ function preload() {
 
 // Setup function
 function setup() {
-  createCanvas(1600, 3500);
+  createCanvas(1600, 4100);
 
   if (PPMono === null) {
     console.error("Error loading the table. Make sure the file is in the correct location.");
@@ -102,8 +102,9 @@ function draw() {
   eyeViz(masterCountyData);
 
   push();
+  noStroke();
   fill(250);
-  rect(900, 0, 700, 3500);
+  rect(900, 0, 700, 4100);
   pop();
 
   tooltipPanel();

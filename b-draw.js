@@ -88,11 +88,11 @@ function eyeViz(dataArray) {
         ellipse(0, 0, ring4 + appsPlotted, ring4 + appsPlotted);
   
         noStroke();
-        fill(color("#333333"), lineOpacity);
+        fill(75, 75, 75, lineOpacity + 50);
         textFont(PPMono);
         textSize(10);
         textAlign(CENTER);
-        text(stateA, 0, 65);
+        text(stateA, 0, 120);
         pop();
       }
   

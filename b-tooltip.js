@@ -136,12 +136,15 @@ function tooltipCallout(dataArray, highlightedLine) { //Redraws the "Flower" on 
     let green1 = data.green1;
     let blue1 = data.blue1;
 
-    let plottedPerPerson = (perPerson - 371.79) / 2;
+    let calloutScaleFactor = 2.5;
+    let circleScaleFactor = scaleFactor * 2/calloutScaleFactor;
+
+    let plottedPerPerson = (perPerson - 371.79) / calloutScaleFactor;
 
     //Drawing
     let angleIncrement = radians(360.0 / 202);
     let lineRotation = HALF_PI + (angleIncrement * countyCounter);
-    let lineOffset = appsPlotted * 2 + 5;
+    let lineOffset = (appsPlotted/2) * circleScaleFactor + 5;
 
     if (county == special.county) {
       lineWeight = 2;
@@ -153,7 +156,7 @@ function tooltipCallout(dataArray, highlightedLine) { //Redraws the "Flower" on 
     }
 
     push();
-    translate(1175, window.scrollY + 350);
+    translate(1175, window.scrollY + 325);
     rotate(lineRotation);
     stroke(red1, green1, blue1, alpha1);
     strokeWeight(lineWeight);
@@ -175,12 +178,12 @@ function tooltipCallout(dataArray, highlightedLine) { //Redraws the "Flower" on 
       pop();
 
       push();
-      translate(1175, window.scrollY + 350);
+      translate(1175, window.scrollY + 325);
       noStroke();
       fill(204);
-      ellipse(0, 0, appsPlotted * 4, appsPlotted * 4);
+      ellipse(0, 0, appsPlotted * circleScaleFactor, appsPlotted * circleScaleFactor);
       fill(255, 0, 100);
-      ellipse(0, appsPlotted * 2 - awardsPlotted * 2, awardsPlotted * 4, awardsPlotted * 4);
+      ellipse(0, (appsPlotted /2 - awardsPlotted /2) * circleScaleFactor, awardsPlotted * circleScaleFactor, awardsPlotted * circleScaleFactor);
       pop();
 
       circlesDrawn = 1;
@@ -260,7 +263,6 @@ function stateHover(){
       noStroke();
       fill(0, 255, 0);
       ellipse(0, 0 + window.scrollY, distanceThreshold, distanceThreshold);
-      console.log(state);
     }
 
 }
@@ -270,6 +272,6 @@ function stateHoverOpacity(pointX, pointY, stateCircleThreshold){
   if(dist(mouseX, mouseY, pointX, pointY) < (stateCircleThreshold / 2)){
     return 255;
   } else {
-    return 100;
+    return 150;
   }
 }

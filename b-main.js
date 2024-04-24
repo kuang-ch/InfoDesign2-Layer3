@@ -90,7 +90,7 @@ function setup() {
   } else {
   }
 
-  keyButton = createButton(`?`);
+  keyButton = createButton(`...`);
   keyButton.addClass('custom-button')
   keyButton.position(800, 40);
   keyButton.mousePressed(toggleButton);

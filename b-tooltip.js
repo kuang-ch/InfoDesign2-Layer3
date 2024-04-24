@@ -144,7 +144,7 @@ function tooltipCallout(dataArray, highlightedLine) { //Redraws the "Flower" on 
     //Drawing
     let angleIncrement = radians(360.0 / 202);
     let lineRotation = HALF_PI + (angleIncrement * countyCounter);
-    let lineOffset = (appsPlotted/2) * circleScaleFactor + 5;
+    let lineOffset = (appsPlotted/2) * circleScaleFactor + 3;
 
     if (county == special.county) {
       lineWeight = 2;
@@ -271,7 +271,8 @@ function stateHover(){
 function stateHoverOpacity(pointX, pointY, stateCircleThreshold){
   if(dist(mouseX, mouseY, pointX, pointY) < (stateCircleThreshold / 2)){
     return 255;
+    console.log("BIG TEXT")
   } else {
-    return 150;
+    return 125;
   }
 }

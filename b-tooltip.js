@@ -273,6 +273,6 @@ function stateHoverOpacity(pointX, pointY, stateCircleThreshold){
     return 255;
     console.log("BIG TEXT")
   } else {
-    return 125;
+    return 165;
   }
 }
